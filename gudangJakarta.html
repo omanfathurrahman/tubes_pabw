@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="gudangJakarta.css">
+    <title>Update PABW</title>
+
+</head>
+
+<body>
+    <header>
+        <h2>Ekspedisi xyz</h2>
+
+        <div class="">
+            <label for="layanan">Layanan</label>
+            <select name="layanan" id="layanan">
+                <option value="agenPengirim">Agen Pengirim</option>
+                <option value="gudang">Gudang</option>
+                <option value="tracking">Tracking</option>
+                <option value="statusbarang">Status Barang</option>
+            </select>
+        </div>
+    </header>
+    <div class="update1">
+        <h1>Gudang Jakarta</h1>
+    </div>
+
+
+    <div class="tombol">
+        <button style="cursor: pointer;"><img src="Vector.png" alt=""> Data Baru</button>
+    </div>
+
+    <div class="" id="app">
+        <table width="1000px" border=1>
+            <thead>
+                <tr>
+                    <th>Nama Pengirim</th>
+                    <th>Nama Penerima</th>
+                    <th>Nama Barang</th>
+                    <th>Jenis Barang</th>
+                    <th>Status kedatangan barang</th>
+                    <th>Mudah Pecah</th>
+                    <th>Kode resi</th>
+                    <th>Berat Barang</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in barang">
+                    <td>{{ item.nama_pengirim }}</td>
+                    <td>{{ item.nama_penerima }}</td>
+                    <td>{{ item.nama_barang }}</td>
+                    <td>{{ item.jenis_barang }}</td>
+                    <td>
+                        <select name="" id="" @change="ubahStatusKedatanganBarang($event, item.id)">
+                            <option v-for="status in statusKedatanganBarang" :value="status"
+                                :selected="cekStatusKedatanganBarang(item.lokasi_barang) == status">
+                                {{ status }}
+                            </option>
+                        </select>
+                    </td>
+                    <td>{{ item.mudah_pecah }}</td>
+                    <td>{{ item.kode_resi }}</td>
+                    <td>{{ item.berat_barang }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="gudangJakarta.js"></script>
+    <script>
+        let daftarBarang = null;
+
+        async function fetchData() {
+            try {
+                const response = await axios.get('http://127.0.0.1:8080/barang');
+                console.log(response.data);
+                daftarBarang = response.data;
+                return daftarBarang;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchData()
+            .then(data => {
+                daftarBarang = data.barang;
+                daftarBarang = daftarBarang.filter(item => item.lokasi_barang2 == 'gudang jakarta' || item.lokasi_barang2 == 'antara jakarta dan bandung');
+                initializeVueApp(daftarBarang); // Panggil fungsi untuk menginisialisasi aplikasi Vue dengan data yang diperbarui
+            });
+
+        function initializeVueApp(daftarBarang) {
+
+            const { createApp } = Vue;
+
+            createApp({
+                data() {
+                    return {
+                        message: 'Hello Vue!',
+                        barang: daftarBarang,
+                        statusKedatanganBarang: ['Belum sampai', 'Sudah sampai', 'Perjalanan ke kota berikutnya']
+                    };
+                },
+                methods: {
+                    async ubahStatusKedatanganBarang(event, id) {
+                        // console.log('Ubah status kedatangan barang');
+                        // console.log(event.target.value)
+                        // console.log(id)
+
+                        let lokasi_barang = null;
+                        let lokasi_barang2 = null;
+                        switch (event.target.value) {
+                            case 'Belum sampai':
+                                lokasi_barang = 'Perjalanan ke gudang jakarta';
+                                break
+                            case 'Sudah sampai':
+                                lokasi_barang = 'gudang jakarta';
+                                break
+                            case 'Perjalanan ke kota berikutnya':
+                                lokasi_barang = 'Perjalanan ke gudang bandung';
+                                break
+                        }
+                        console.log(lokasi_barang)
+                        
+                        if (event.target.value == 'Perjalanan ke kota berikutnya') {
+                            lokasi_barang2 = 'antara jakarta dan bandung';
+                        } else {
+                            lokasi_barang2 = 'gudang jakarta';
+                        }
+                        console.log(lokasi_barang2)
+
+                        try {
+                            const response = await axios.put('http://127.0.0.1:8080/barang/'+id, {
+                                // Data yang ingin diperbarui
+                                lokasi_barang: lokasi_barang,
+                                lokasi_barang2: lokasi_barang2
+                            });
+                            console.log(response.data); // Tanggapan dari server
+                            // Lakukan tindakan lain berdasarkan tanggapan dari server
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    },
+                    cekStatusKedatanganBarang(status) {
+                        switch (status) {
+                            case 'Perjalanan ke gudang jakarta':
+                                return 'Belum sampai';
+                            case 'gudang jakarta':
+                                return 'Sudah sampai';
+                            case 'Perjalanan ke gudang bandung':
+                                return 'Perjalanan ke kota berikutnya';
+                        }
+                    },
+                    // Method-method Vue lainnya
+                },
+            }).mount('#app');
+
+        }
+    </script>
+
+
+</body>
+
+</html>

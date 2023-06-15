@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Barang</title>
+    <link rel="stylesheet" href="./track.css">
+</head>
+<header>
+    <h2>Ekspedisi xyz</h2>
+
+    <div class="">
+        <label for="layanan">Layanan</label>
+        <select name="layanan" id="layanan">
+            <option value="agenPengirim">Agen Pengirim</option>
+            <option value="gudang">Gudang</option>
+            <option value="tracking">Tracking</option>
+        </select>
+    </div>
+</header>
+
+<body>
+    <div class="" id="app">
+        <div class="nav-konten">
+            <p class="judul-konten" align="center">Tracking Barang</p>
+            <p class="judul" align="center">Masukan Nomor Resi Paket Anda.</p>
+            <div class="konten">
+                <form id="form">
+                    <input type="text" name=id_b" id="id_b" v-model="nomor_resi" @change="console.log('kontol')"><br>
+                    <span id="id_bError" class="error"></span> <!-- Error message container -->
+                </form>
+                <!-- <button type="submit"  id="submit"><a>Cari</a></button> -->
+            </div>
+        </div>
+
+        <div class="" style="margin-top: 100px;" v-if="cekResi()">
+            <table width="1000px">
+                <thead>
+                    <tr>
+                        <th>Nama Pengirim</th>
+                        <th>Nama Penerima</th>
+                        <th>Nama Barang</th>
+                        <th>Jenis Barang</th>
+                        <th>Mudah Pecah</th>
+                        <th>Kode resi</th>
+                        <th>Berat Barang</th>
+                        <th>Lokasi barang sekarang</th>
+                    </tr>
+                </thead>
+                <tbody v-for="item in barang">
+                    <tr v-if="cekResi2(item.kode_resi)">
+                        <td>{{ item.nama_pengirim }}</td>
+                        <td>{{ item.nama_penerima }}</td>
+                        <td>{{ item.nama_barang }}</td>
+                        <td>{{ item.jenis_barang }}</td>
+                        <td>{{ item.mudah_pecah }}</td>
+                        <td>{{ item.kode_resi }}</td>
+                        <td>{{ item.berat_barang }}</td>
+                        <td>{{ item.lokasi_barang }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        let daftarBarang = null;
+
+        async function fetchData() {
+            try {
+                const response = await axios.get('http://127.0.0.1:8080/barang');
+                console.log(response.data);
+                daftarBarang = response.data;
+                return daftarBarang;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchData()
+            .then(data => {
+                daftarBarang = data.barang;
+                initializeVueApp(daftarBarang); // Panggil fungsi untuk menginisialisasi aplikasi Vue dengan data yang diperbarui
+            });
+
+        function initializeVueApp(daftarBarang) {
+
+            const { createApp } = Vue;
+
+            createApp({
+                data() {
+                    return {
+                        nomor_resi: '',
+                        message: 'Hello Vue!',
+                        barang: daftarBarang,
+                        statusKedatanganBarang: ['Belum sampai', 'Sudah sampai', 'Perjalanan ke kota berikutnya']
+                    };
+                },
+                methods: {
+                    async ubahStatusKedatanganBarang(event, id) {
+                        // console.log('Ubah status kedatangan barang');
+                        // console.log(event.target.value)
+                        // console.log(id)
+
+                        let lokasi_barang = null;
+                        let lokasi_barang2 = null;
+                        switch (event.target.value) {
+                            case 'Belum sampai':
+                                lokasi_barang = 'Perjalanan ke gudang bandung';
+                                break
+                            case 'Sudah sampai':
+                                lokasi_barang = 'gudang bandung';
+                                break
+                            case 'Perjalanan ke penerima':
+                                lokasi_barang = 'Perjalanan ke penerima';
+                                break
+                        }
+                        console.log(lokasi_barang)
+
+                        if (event.target.value == 'Belum sampai') {
+                            lokasi_barang2 = 'antara jakarta dan bandung';
+                        } else {
+                            lokasi_barang2 = 'gudang bandung';
+                        }
+                        console.log(lokasi_barang2)
+
+                        try {
+                            const response = await axios.put('http://127.0.0.1:8080/barang/' + id, {
+                                // Data yang ingin diperbarui
+                                lokasi_barang: lokasi_barang,
+                                lokasi_barang2: lokasi_barang2
+                            });
+                            console.log(response.data); // Tanggapan dari server
+                            // Lakukan tindakan lain berdasarkan tanggapan dari server
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    },
+                    cekStatusKedatanganBarang(status) {
+                        switch (status) {
+                            case 'Perjalanan ke gudang bandung':
+                                return 'Belum sampai';
+                            case 'gudang bandung':
+                                return 'Sudah sampai';
+                            case 'Perjalanan ke penerima':
+                                return 'Perjalanan ke penerima';
+                        }
+                    },
+                    cekResi2 (kode_resi) {
+                        if (kode_resi.startsWith(this.nomor_resi)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+
+                    cekResi() {
+                        if (this.nomor_resi != '' && Object.values(this.barang).some(value => value.kode_resi.startsWith(this.nomor_resi))) {
+                        // if (this.nomor_resi !== '') {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    // Method-method Vue lainnya
+                },
+            }).mount('#app');
+
+        }
+    </script>
+</body>
+
+</html>

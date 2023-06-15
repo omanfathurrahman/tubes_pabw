@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title> AGENT</title>
+    <link rel="stylesheet" href="agent.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Tambah Pesanan</title>
+    <style type="text/css">
+        .konten {
+            background-color: #ffffff;
+            width: 800px;
+            height: 400px;
+            margin: 0 auto;
+            margin-top: 2rem;
+            padding: 20px 20px 20px 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+            font-size: 20px;
+            padding-left: 50px;
+            padding-top: 50px;
+            padding-right: 50px;
+            
+            
+        }
+
+        .judul-konten {
+            font-size: 25px;
+            color: #3A5BA0;
+            margin: 0 auto;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            margin-left: 15px;
+            
+
+        }
+
+        .nav-konten {
+            margin: 1rem 0 0 5rem;
+            justify-content: center;
+            
+        }
+
+
+
+        .nav-side {
+            display: flex;
+        }
+
+        .sidebar {
+            background-color: #6F9D72;
+            flex-direction: column;
+            padding: 2rem;
+            height: 570px;
+            width: 140px;
+        }
+
+        .sidebars a {
+            
+            color: white;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            text-decoration: none;
+            border-bottom: 1px dotted white;
+        }
+
+        .sidebars p a:hover {
+            color: #395144;
+        }
+        .pesan{
+            color: #3A5BA0;
+
+        }
+        .isi {
+            width: 500px;
+            height: 25px;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            margin-left: 10px;
+            border-color: #3A5BA0;
+            justify-content: center;
+        }
+
+        .pwd{
+            font-size: 50px;
+        }
+
+        #submit {
+            background-color: #FFA500;
+            border: 1px;
+            width: 100px;
+            height: 40px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            float: left;
+            color: #ffffff;
+
+        }
+
+        #submit a {
+            text-decoration: none;
+            color: #F0EBCE;
+        }
+
+        .pesan #submit:hover {
+            background-color: #395144;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <header>
+        <h2>Ekspedisi</h2>
+
+        <div class="">
+            <label for="layanan">Layanan</label>
+            <select name="layanan" id="layanan">
+                <option value="agenPengirim">Agen Pengirim</option>
+                <option value="gudang">Gudang</option>
+                <option value="tracking">Tracking</option>
+            </select>
+        </div>
+    </header>
+      
+    <div class="nav-konten">
+        <center><p class="judul-konten">DATA BARANG</p></center>
+        <div class="konten">
+            <div class="pesan">
+                <form action="" method="" id="submitBarang">
+                    <table>
+                        <tr>
+                            <th>
+                                <label for="nama_pengirim">Pengirim :</label>
+                            </th>
+                            <td>
+                                <input type="text" class="isi" id="nama_pengirim" required name="nama_pengirim"><br><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="nama_penerima">Penerima :</label>
+                            </th>
+                            <td>
+                                <input type="text" class="isi" id="nama_penerima" required name="nama_penerima"><br><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="nama_barang">Nama Barang :</label>
+                            </th>
+                            <td>
+                                <input type="text" class="isi" id="nama_barang" required name="nama_barang"><br><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="jenis_barang">Jenis Barang :</label>
+                            </th>
+                            <td>
+                                <input type="text" class="isi" id="jenis_barang" required name="jenis_barang"></textarea><br><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <p>Mudah pecah:</p>
+                            </th>
+                            <td>
+                                <input type="radio" name="mudah_pecah" id="" value="Ya">
+                                <label for="Ya">Ya</label>
+                                <input type="radio" name="mudah_pecah" id="" value="Tidak">
+                                <label for="Tidak">Tidak</label><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="berat">berat :</label>
+                            </th>
+                            <td>
+                                <input type="number" class="isi" id="berat" required name="berat"><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                            </th>
+                            <td>
+                                <button type="submit">Simpan</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="agent.js"></script>
+</body>
+
+</html>
